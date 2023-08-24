@@ -54,7 +54,7 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
                 }
                 consumer.accept(this.bufferHandlers.get(0).currenPos);
             }
-            Thread.sleep(2000);
+            Thread.sleep(1500);
             for (BufferHandler bufferHandler : bufferHandlers) {
                 bufferHandler.interrupt();
                 numberOfLines += bufferHandler.numberOfLines;
@@ -144,7 +144,8 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
                 try {
                     semaphore.acquire();
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
+                    //TODO: решить проблему с InterruptedException, семафор периодически ловит
                 }
                 while (buffer.hasRemaining()) {
                     symbol = buffer.get();

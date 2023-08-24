@@ -18,7 +18,7 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Program for counting unique IP addresses.");
-        System.out.println("UIAC version " + "0.1" + "   By WhiteK0T  https://github.com/WhiteK0T/IP-Addr-Counter");
+        System.out.println("UIAC version " + "1.0" + "   By WhiteK0T  https://github.com/WhiteK0T/IP-Addr-Counter");
         System.out.println("UIAC [number of threads 1-20] filename with ip addresses");
         if (args.length == 0) {
             System.out.println("Not enough arguments to run");
