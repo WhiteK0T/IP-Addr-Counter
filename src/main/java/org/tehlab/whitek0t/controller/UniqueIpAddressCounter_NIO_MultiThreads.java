@@ -97,6 +97,7 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
 
     private boolean isFirstRun(boolean firstRun, int index, BufferHandler bufferHandler, ByteBuffer byteBuffer) {
         if (firstRun) {
+            bufferHandler.setDaemon(true);
             if (index == 0) {
                 bufferHandler.start();
                 /*if (this.bufferHandlers.size() == 1) {

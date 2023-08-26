@@ -16,8 +16,8 @@ import static org.hamcrest.Matchers.equalTo;
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-@Warmup(iterations = 3, time = 5000, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 5000, timeUnit = TimeUnit.MILLISECONDS)
+@Warmup(iterations = 2, time = 5000, timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(iterations = 3, time = 5000, timeUnit = TimeUnit.MILLISECONDS)
 public class UtilTest {
 
     @ParameterizedTest
@@ -53,6 +53,13 @@ public class UtilTest {
         assertThat(actual, equalTo(expected));
     }
 
+    @ParameterizedTest
+    @CsvFileSource(numLinesToSkip = 1, resources = "/ip.csv")
+    void getLongFromIpAddress_Optimized(long expected, String strIp) {
+        Long actual = Util.getLongFromIpAddress_Optimized(strIp);
+        assertThat(actual, equalTo(expected));
+    }
+
     @Benchmark
     public long benchmarkParseInt() {
         return Util.getLongFromIpAddress_parseInt("255.25.155.0");
@@ -61,5 +68,10 @@ public class UtilTest {
     @Benchmark
     public long benchmarkInetAddress() throws UnknownHostException {
         return Util.getLongFromIpAddress_InetAddress("255.25.155.0");
+    }
+
+    @Benchmark
+    public long benchmarkOptimized() throws UnknownHostException {
+        return Util.getLongFromIpAddress_Optimized("255.25.155.0");
     }
 }

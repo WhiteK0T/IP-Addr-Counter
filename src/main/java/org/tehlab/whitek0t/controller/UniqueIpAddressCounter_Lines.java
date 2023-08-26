@@ -4,14 +4,13 @@ import org.tehlab.whitek0t.dao.BitArraySet;
 import org.tehlab.whitek0t.dto.Result;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalTime;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static org.tehlab.whitek0t.util.Util.getLongFromIpAddress_InetAddress;
+import static org.tehlab.whitek0t.util.Util.getLongFromIpAddress_Optimized;
 
 public class UniqueIpAddressCounter_Lines implements Worker {
 
@@ -28,12 +27,8 @@ public class UniqueIpAddressCounter_Lines implements Worker {
 
         try (Stream<String> lines = Files.lines(filePath)) {
             lines.forEach(line -> {
-                try {
-                    long ipAddress = getLongFromIpAddress_InetAddress(line);
-                    bitArraySet.set(ipAddress);
-                } catch (UnknownHostException e) {
-                    throw new RuntimeException(e);
-                }
+                long ipAddress = getLongFromIpAddress_Optimized(line);
+                bitArraySet.set(ipAddress);
                 lambdaContext.numberOfLines++;
             });
 

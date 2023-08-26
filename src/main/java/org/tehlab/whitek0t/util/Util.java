@@ -39,4 +39,23 @@ public final class Util {
         }
         return result;
     }
+
+    public static long getLongFromIpAddress_Optimized(CharSequence ipAddress) {
+        int base = 0;
+        int part = 0;
+        char symbol;
+
+        for (int i = 0, n = ipAddress.length(); i < n; i++) {
+            symbol = ipAddress.charAt(i);
+            if (symbol != 13) {
+                if (symbol == '.') {
+                    base = (base << Byte.SIZE) | part;
+                    part = 0;
+                } else {
+                    part = part * 10 + symbol - '0';
+                }
+            }
+        }
+        return ((long) base << Byte.SIZE) | part;
+    }
 }

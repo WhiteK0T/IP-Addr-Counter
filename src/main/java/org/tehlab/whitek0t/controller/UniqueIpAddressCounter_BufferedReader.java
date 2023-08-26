@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.util.function.Consumer;
 
 import static org.tehlab.whitek0t.util.Util.getLongFromIpAddress_InetAddress;
+import static org.tehlab.whitek0t.util.Util.getLongFromIpAddress_Optimized;
 
 public class UniqueIpAddressCounter_BufferedReader implements Worker {
 
@@ -26,7 +27,7 @@ public class UniqueIpAddressCounter_BufferedReader implements Worker {
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                long ipAddress = getLongFromIpAddress_InetAddress(line);
+                long ipAddress = getLongFromIpAddress_Optimized(line);
                 bitArraySet.set(ipAddress);
                 numberOfLines++;
             }
