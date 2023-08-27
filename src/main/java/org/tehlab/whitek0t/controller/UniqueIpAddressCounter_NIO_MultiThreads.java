@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
     public static int capacity = 1 << 27; //  134_217_728
-    static BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1); // 4_294_967_294
+    private final static BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1); // 4_294_967_294
     private final List<BufferHandler> bufferHandlers = new ArrayList<>();
     private long filePartSize = 0;
 
@@ -55,7 +55,7 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
     }
 
     private long getNumberOfLinesAndStopThreads(long numberOfLines) {
-        for (BufferHandler bufferHandler : bufferHandlers) {
+        for (BufferHandler bufferHandler : this.bufferHandlers) {
             bufferHandler.interrupt();
             numberOfLines += bufferHandler.numberOfLines;
         }

@@ -31,7 +31,7 @@ public class Main {
         System.out.println();
         long filePartSize = fileSize / numberOfThreads;
         Result result = worker.work(filePath, numberOfThreads, aLong -> {
-            double percent = (double) aLong / filePartSize * 100;
+            double percent = aLong < filePartSize ? (double) aLong / filePartSize * 100 : 100.0;
             System.out.printf("\rDone: %.0f%%", percent);
         });
         System.out.println("\n");
