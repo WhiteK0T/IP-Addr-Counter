@@ -1,4 +1,6 @@
-package org.tehlab.whitek0t.codeForReadme;
+package org.tehlab.whitek0t.dao;
+
+import org.tehlab.whitek0t.codeForReadme.IntContainer;
 
 import java.util.BitSet;
 
@@ -12,6 +14,14 @@ public class DualBitSet implements IntContainer {
             positive.set(i);
         } else {
             negative.set(~i);
+        }
+    }
+
+    public boolean get(int i) {
+        if (i > -1) {
+            return positive.get(i);
+        } else {
+            return negative.get(~i);
         }
     }
 

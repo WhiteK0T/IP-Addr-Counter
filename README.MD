@@ -185,7 +185,7 @@ public class DualBitSet implements IntContainer {
 **Классическая реализация**
 
 ```java
-import org.tehlab.whitek0t.codeForReadme.DualBitSet;
+import org.tehlab.whitek0t.dao.DualBitSet;
 import org.tehlab.whitek0t.util.Util;
 
 import java.io.BufferedReader;
@@ -261,7 +261,7 @@ public interface IntContainer {
 Теперь подсчёт уникальных адресов будет выглядеть следующим образом:
 
 ```java
-import org.tehlab.whitek0t.codeForReadme.DualBitSet;
+import org.tehlab.whitek0t.dao.DualBitSet;
 import org.tehlab.whitek0t.codeForReadme.IntContainer;
 
 import java.io.IOException;
@@ -483,10 +483,11 @@ Gb в секунду (PCIe3 до 3.5Gb, PCIe4 до 7.5Gb). К тому же да
 **ByteBuffer** предоставляет возможность управления буфером и выполнять различные операции, такие как чтение, запись, 
 преобразование и перемещение данных. Он может быть использован для обработки бинарных данных, работы с сетевыми 
 протоколами, чтения и записи файлов и других операций, связанных с байтами.
+
 ```Java
 public class UniqueIpAddressCounter_NIO implements Worker {
 
-    private static final BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1);
+    private static final ArrayBitSet arrayBitSet = new ArrayBitSet((long) Integer.MAX_VALUE << 1);
 
     @Override
     public Result work(Path filePath, int numberOfThreads, Consumer<Long> consumer) {
@@ -550,7 +551,7 @@ NIO может больше. Но у нас медленная обработк�
 ```java
 public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
     public static int capacity = 1 << 27; //  134_217_728
-    private final static BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1); // 4_294_967_294
+    private final static ArrayBitSet arrayBitSet = new ArrayBitSet((long) Integer.MAX_VALUE << 1); // 4_294_967_294
     private final List<BufferHandler> bufferHandlers = new ArrayList<>();
     private long filePartSize = 0;
 

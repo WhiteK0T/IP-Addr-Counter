@@ -1,6 +1,6 @@
 package org.tehlab.whitek0t.controller;
 
-import org.tehlab.whitek0t.dao.BitArraySet;
+import org.tehlab.whitek0t.dao.ArrayBitSet;
 import org.tehlab.whitek0t.dto.Result;
 
 import java.io.BufferedReader;
@@ -10,12 +10,11 @@ import java.nio.file.Path;
 import java.time.LocalTime;
 import java.util.function.Consumer;
 
-import static org.tehlab.whitek0t.util.Util.getLongFromIpAddress_InetAddress;
 import static org.tehlab.whitek0t.util.Util.getLongFromIpAddress_Optimized;
 
 public class UniqueIpAddressCounter_BufferedReader implements Worker {
 
-    private final BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1);
+    private final ArrayBitSet arrayBitSet = new ArrayBitSet((long) Integer.MAX_VALUE << 1);
 
     @Override
     public Result work(Path filePath, int numberOfThreads, Consumer<Long> consumer) {
@@ -28,10 +27,10 @@ public class UniqueIpAddressCounter_BufferedReader implements Worker {
             String line;
             while ((line = reader.readLine()) != null) {
                 long ipAddress = getLongFromIpAddress_Optimized(line);
-                bitArraySet.set(ipAddress);
+                arrayBitSet.set(ipAddress);
                 numberOfLines++;
             }
-            uniqueAddresses = bitArraySet.cardinality();
+            uniqueAddresses = arrayBitSet.cardinality();
             LocalTime endTime = LocalTime.now();
             leadTime = endTime.minusNanos(startTime.toNanoOfDay());
         } catch (IOException e) {

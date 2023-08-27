@@ -4,10 +4,16 @@ public class BitSetArray implements IntContainer {
     private final long[] bits;
     private final long size;
 
+    private long count = 0;
+
     public BitSetArray() {
         this.size = (long) Integer.MAX_VALUE << 1;
         long arraySize = (long) Math.ceil((double) size / 64);
         bits = new long[(int) arraySize];
+    }
+
+    public long getCount() {
+        return count;
     }
 
     @Override
@@ -19,6 +25,7 @@ public class BitSetArray implements IntContainer {
         int arrayIndex = (int) (index / 64);
         int bitIndex = (int) (index % 64);
         bits[arrayIndex] |= (1L << bitIndex);
+        this.count++;
     }
 
     public boolean get(int i) {

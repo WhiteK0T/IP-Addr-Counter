@@ -1,6 +1,6 @@
 package org.tehlab.whitek0t.controller;
 
-import org.tehlab.whitek0t.dao.BitArraySet;
+import org.tehlab.whitek0t.dao.ArrayBitSet;
 import org.tehlab.whitek0t.dto.Result;
 
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public class UniqueIpAddressCounter_NIO implements Worker {
 
-    private static final BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1);
+    private static final ArrayBitSet arrayBitSet = new ArrayBitSet((long) Integer.MAX_VALUE << 1);
 
     @Override
     public Result work(Path filePath, int numberOfThreads, Consumer<Long> consumer) {
@@ -39,7 +39,7 @@ public class UniqueIpAddressCounter_NIO implements Worker {
                         continue;
                     }
                     if (symbol == 10) {
-                        bitArraySet.set(((long) baseNum << Byte.SIZE) | partNum);
+                        arrayBitSet.set(((long) baseNum << Byte.SIZE) | partNum);
                         baseNum = 0;
                         partNum = 0;
                         numberOfLines++;
@@ -54,7 +54,7 @@ public class UniqueIpAddressCounter_NIO implements Worker {
                 }
                 consumer.accept(bytesRead);
             }
-            uniqueAddresses = bitArraySet.cardinality();
+            uniqueAddresses = arrayBitSet.cardinality();
             LocalTime endTime = LocalTime.now();
             leadTime = endTime.minusNanos(startTime.toNanoOfDay());
         } catch (IOException e) {

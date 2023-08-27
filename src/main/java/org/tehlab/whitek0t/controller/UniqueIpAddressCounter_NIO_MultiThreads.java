@@ -1,6 +1,6 @@
 package org.tehlab.whitek0t.controller;
 
-import org.tehlab.whitek0t.dao.BitArraySet;
+import org.tehlab.whitek0t.dao.ArrayBitSet;
 import org.tehlab.whitek0t.dto.Result;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
     public static int capacity = 1 << 27; //  134_217_728
-    private final static BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1); // 4_294_967_294
+    private final static ArrayBitSet arrayBitSet = new ArrayBitSet((long) Integer.MAX_VALUE << 1); // 4_294_967_294
     private final List<BufferHandler> bufferHandlers = new ArrayList<>();
     private long filePartSize = 0;
 
@@ -45,7 +45,7 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
             }
             Thread.sleep(1500);
             numberOfLines = getNumberOfLinesAndStopThreads(numberOfLines);
-            uniqueAddresses = bitArraySet.cardinality();
+            uniqueAddresses = arrayBitSet.cardinality();
             LocalTime endTime = LocalTime.now();
             leadTime = endTime.minusNanos(startTime.toNanoOfDay());
         } catch (IOException | InterruptedException e) {
@@ -151,7 +151,7 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
                         continue;
                     }
                     if (symbol == 10) {
-                        bitArraySet.set(((long) baseNum << Byte.SIZE) | partNum);
+                        arrayBitSet.set(((long) baseNum << Byte.SIZE) | partNum);
                         baseNum = 0;
                         partNum = 0;
                         numberOfLines++;

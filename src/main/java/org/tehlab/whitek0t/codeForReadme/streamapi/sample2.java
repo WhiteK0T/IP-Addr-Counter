@@ -1,6 +1,6 @@
 package org.tehlab.whitek0t.codeForReadme.streamapi;
 
-import org.tehlab.whitek0t.codeForReadme.DualBitSet;
+import org.tehlab.whitek0t.dao.DualBitSet;
 import org.tehlab.whitek0t.codeForReadme.IntContainer;
 
 import java.io.IOException;

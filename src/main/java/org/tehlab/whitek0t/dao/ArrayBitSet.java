@@ -1,10 +1,10 @@
 package org.tehlab.whitek0t.dao;
 
-public class BitArraySet {
+public class ArrayBitSet {
     private final long[] bits;
     private final long size;
 
-    public BitArraySet(long size) {
+    public ArrayBitSet(long size) {
         if (size < 0 || size > 137438953472L) {
             throw new IllegalArgumentException("Size cannot be less than zero or greater than 137 438 953 472 size = " + size);
         }

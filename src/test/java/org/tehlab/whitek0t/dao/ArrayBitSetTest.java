@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.tehlab.whitek0t.util.Util.getStringFromLongIpAddress;
 
-public class BitArraySetTest {
-    static BitArraySet bitArraySet = new BitArraySet(4294967297L);
+public class ArrayBitSetTest {
+    static ArrayBitSet arrayBitSet = new ArrayBitSet(4294967297L);
 
     static LongStream factory() {
         return LongStream.range(1000L, 1100L);
@@ -22,14 +22,14 @@ public class BitArraySetTest {
 
     @BeforeEach
     void setUp() {
-        bitArraySet = new BitArraySet(4294967297L);
+        arrayBitSet = new ArrayBitSet(4294967297L);
     }
 
     @ParameterizedTest
     @MethodSource(value = "factory")
     void set(Long index) {
-        bitArraySet.set(index);
-        boolean expected = bitArraySet.get(index);
+        arrayBitSet.set(index);
+        boolean expected = arrayBitSet.get(index);
         assertTrue(expected, getStringFromLongIpAddress(index));
     }
 
@@ -50,21 +50,21 @@ public class BitArraySetTest {
             "53298951,3.45.71.7"
     })
     void get(Long index, String ipStr) {
-        bitArraySet.set(index);
-        boolean expected = bitArraySet.get(index);
+        arrayBitSet.set(index);
+        boolean expected = arrayBitSet.get(index);
         assertTrue(expected, ipStr);
     }
 
 
     @Test
     void cardinality() {
-        LongStream.range(0, 1000L).forEach(index -> bitArraySet.set(index));
-        long actual = bitArraySet.cardinality();
+        LongStream.range(0, 1000L).forEach(index -> arrayBitSet.set(index));
+        long actual = arrayBitSet.cardinality();
         assertEquals(1000, actual);
     }
 
     @Benchmark
     public long cardinalityBench() {
-        return bitArraySet.cardinality();
+        return arrayBitSet.cardinality();
     }
 }
