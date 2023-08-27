@@ -14,15 +14,12 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- Logging -->
-        <logback.version>1.2.11</logback.version>
-        <slf4j.version>1.7.36</slf4j.version>
         <!-- Tests  -->
         <hamcrest.version>2.2</hamcrest.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <!-- JMH -->
         <org.openjdk.jmh.version>1.36</org.openjdk.jmh.version>
-
+        <native.maven.plugin.version>0.9.24</native.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -80,24 +77,34 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.graalvm.nativeimage</groupId>
-                <artifactId>native-image-maven-plugin</artifactId>
-                <version>21.2.0</version>
-                <configuration>
-                    <!-- The native image build needs to know the entry point to your
-                    application -->
-                    <mainClass>org.tehlab.whitek0t.Main</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>native-image</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${native.maven.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <imageName>UIAC</imageName>
+                            <mainClass>org.tehlab.whitek0t.Main</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
