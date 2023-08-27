@@ -392,10 +392,10 @@ public static long getLongFromIpAddress_Optimized(CharSequence ipAddress) {
 Результаты замера:
 
 ```
-Benchmark                      Mode  Cnt   Score   Error  Units
-UtilTest.benchmarkInetAddress  avgt    3  24.274 ± 2.588  ns/op
-UtilTest.benchmarkOptimized    avgt    3   0.363 ± 0.033  ns/op
-UtilTest.benchmarkParseInt     avgt    3  87.949 ± 4.241  ns/op
+Benchmark                                  Mode  Cnt   Score   Error  Units
+UtilTest.getLongFromIpAddress_InetAddress  avgt    3  24.442 ± 0.992  ns/op
+UtilTest.getLongFromIpAddress_Optimized    avgt    3   0.366 ± 0.033  ns/op
+UtilTest.getLongFromIpAddress_parseInt     avgt    3  88.273 ± 8.072  ns/op
 
 ```
 Как видим, наша собственная реализация работает на порядок быстрее.

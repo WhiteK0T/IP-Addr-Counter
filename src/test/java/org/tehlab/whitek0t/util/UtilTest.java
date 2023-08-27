@@ -61,17 +61,17 @@ public class UtilTest {
     }
 
     @Benchmark
-    public long benchmarkParseInt() {
+    public long getLongFromIpAddress_parseInt() {
         return Util.getLongFromIpAddress_parseInt("255.25.155.0");
     }
 
     @Benchmark
-    public long benchmarkInetAddress() throws UnknownHostException {
+    public long getLongFromIpAddress_InetAddress() throws UnknownHostException {
         return Util.getLongFromIpAddress_InetAddress("255.25.155.0");
     }
 
     @Benchmark
-    public long benchmarkOptimized() throws UnknownHostException {
+    public long getLongFromIpAddress_Optimized() throws UnknownHostException {
         return Util.getLongFromIpAddress_Optimized("255.25.155.0");
     }
 }
