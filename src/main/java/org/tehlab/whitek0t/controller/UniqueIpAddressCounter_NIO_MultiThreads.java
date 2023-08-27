@@ -14,8 +14,8 @@ import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 
 public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
-    public static int capacity = 1 << 27; //  134_217_728 byte OR 128Mb
-    static BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1); // BitSet size 4_294_967_294
+    public static int capacity = 1 << 27; //  134_217_728
+    static BitArraySet bitArraySet = new BitArraySet((long) Integer.MAX_VALUE << 1); // 4_294_967_294
     private final List<BufferHandler> bufferHandlers = new ArrayList<>();
     private long filePartSize = 0;
 
@@ -24,30 +24,19 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
         long uniqueAddresses = 0;
         long numberOfLines = 0;
         LocalTime leadTime = LocalTime.MIN;
-
         try (FileChannel fileChannel = FileChannel.open(filePath)) {
             long fileSize = fileChannel.size();
             init(numberOfThreads, fileSize);
             LocalTime startTime = LocalTime.now();
-
-            long bytesRead = 0;
             boolean firstRun = true;
-
             while (this.bufferHandlers.get(0).currenPos <= filePartSize) {
                 for (int i = 0; i < this.bufferHandlers.size(); i++) {
                     BufferHandler bufferHandler = this.bufferHandlers.get(i);
                     ByteBuffer byteBuffer = bufferHandler.buffer;
-
                     bufferHandler.semaphore.acquire();
                     byteBuffer.clear();
-                    if (bufferHandler.currenPos + capacity > bufferHandler.calculatedPos + this.filePartSize) {
-                        long newSizeBuf = getNewSizeBuf(fileSize, i, bufferHandler);
-                        bufferHandler.buffer = byteBuffer.slice(0, (int) newSizeBuf);
-                    }
-                    bytesRead = fileChannel.read(byteBuffer, bufferHandler.currenPos);
-                    if (bytesRead > 0) {
-                        bufferHandler.currenPos += bytesRead;
-                    }
+                    sliceBufferIfCapacityExceeded(fileSize, i, bufferHandler, byteBuffer);
+                    bufferHandler.currenPos += fileChannel.read(byteBuffer, bufferHandler.currenPos);
                     byteBuffer.flip();
                     firstRun = isFirstRun(firstRun, i, bufferHandler, byteBuffer);
                     bufferHandler.semaphore.release();
@@ -55,10 +44,7 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
                 consumer.accept(this.bufferHandlers.get(0).currenPos);
             }
             Thread.sleep(1500);
-            for (BufferHandler bufferHandler : bufferHandlers) {
-                bufferHandler.interrupt();
-                numberOfLines += bufferHandler.numberOfLines;
-            }
+            numberOfLines = getNumberOfLinesAndStopThreads(numberOfLines);
             uniqueAddresses = bitArraySet.cardinality();
             LocalTime endTime = LocalTime.now();
             leadTime = endTime.minusNanos(startTime.toNanoOfDay());
@@ -66,6 +52,22 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
             throw new RuntimeException(e);
         }
         return new Result(uniqueAddresses, numberOfLines, leadTime);
+    }
+
+    private long getNumberOfLinesAndStopThreads(long numberOfLines) {
+        for (BufferHandler bufferHandler : bufferHandlers) {
+            bufferHandler.interrupt();
+            numberOfLines += bufferHandler.numberOfLines;
+        }
+        return numberOfLines;
+    }
+
+    private void sliceBufferIfCapacityExceeded(long fileSize, int i, BufferHandler bufferHandler, ByteBuffer byteBuffer) {
+        long endFilePart = bufferHandler.calculatedPos + this.filePartSize;
+        if (bufferHandler.currenPos + capacity > endFilePart) {
+            long newSizeBuf = getNewSizeBuf(fileSize, i, bufferHandler);
+            bufferHandler.buffer = byteBuffer.slice(0, (int) newSizeBuf);
+        }
     }
 
     private void init(int numberOfThreads, long fileSize) {
@@ -97,13 +99,7 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
 
     private boolean isFirstRun(boolean firstRun, int index, BufferHandler bufferHandler, ByteBuffer byteBuffer) {
         if (firstRun) {
-            bufferHandler.setDaemon(true);
-            if (index == 0) {
-                bufferHandler.start();
-                /*if (this.bufferHandlers.size() == 1) {
-                    firstRun = false;
-                }*/
-            }
+            // поиск и сохранение стартовой позиции в буфере
             if (index != 0) {
                 int symbol;
                 while (byteBuffer.hasRemaining()) {
@@ -113,11 +109,12 @@ public class UniqueIpAddressCounter_NIO_MultiThreads implements Worker {
                         break;
                     }
                 }
-                bufferHandler.start();
-                if (index == this.bufferHandlers.size() - 1) {
-                    firstRun = false;
-                }
             }
+            if (index == this.bufferHandlers.size() - 1) {
+                firstRun = false;
+            }
+            bufferHandler.setDaemon(true);
+            bufferHandler.start();
         }
         return firstRun;
     }
